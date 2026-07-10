@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - blockscape.html
-      - arena-clash-play.html
+      - arena-clash.html
       - .github/workflows/blockscape-pages.yml
   workflow_dispatch:
 
@@ -27,18 +27,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Prepare site
         run: |
           mkdir -p _site
           cp blockscape.html _site/index.html
-          cp arena-clash-play.html _site/arena-clash.html
+          cp arena-clash.html _site/arena-clash.html
+          curl --fail --location --retry 3 \
+            https://unpkg.com/three@0.185.0/build/three.module.js \
+            --output _site/three.module.js
+          sed -i 's#https://unpkg.com/three@0.185.0/build/three.module.js#./three.module.js#g' _site/arena-clash.html
           touch _site/.nojekyll
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
+
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
+
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
