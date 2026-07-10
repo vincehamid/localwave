@@ -1,10 +1,11 @@
-name: Deploy Blockscape
+name: Deploy Browser Games
 
 on:
   push:
     branches: [main]
     paths:
       - blockscape.html
+      - arena-clash-play.html
       - .github/workflows/blockscape-pages.yml
   workflow_dispatch:
 
@@ -30,6 +31,7 @@ jobs:
         run: |
           mkdir -p _site
           cp blockscape.html _site/index.html
+          cp arena-clash-play.html _site/arena-clash.html
           touch _site/.nojekyll
       - name: Configure Pages
         uses: actions/configure-pages@v5
