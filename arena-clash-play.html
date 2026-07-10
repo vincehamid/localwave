@@ -1,2 +1,46 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Arena Clash</title>
-<style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#91c9ff;font-family:Arial,sans-serif;color:#fff}canvas{display:block}.menu{position:fixed;inset:0;z-index:5;display:grid;place-items:center;background:#08101bdc}.card{width:min(650px,92vw);padding:28px;border:1px solid #ffffff2d;border-radius:20px;background:#101722ef
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+<title>Arena Clash 3D</title>
+<meta name="description" content="An original browser battlegrounds-style 3D arena fighter." />
+<style>
+:root{--ink:#f7f8fb;--muted:#b9c2cf;--panel:#0d1118db;--line:#ffffff22;--accent:#ffcf5c;--danger:#ff5f69;--energy:#72d6ff}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#92c9ff;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);user-select:none}canvas{display:block;width:100%;height:100%}
+#start{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 50% 35%,#4b6286aa,#070a10ed 68%);backdrop-filter:blur(7px)}
+.card{width:min(720px,100%);padding:32px;border:1px solid var(--line);border-radius:22px;background:#0c1119e8;box-shadow:0 30px 100px #0009;text-align:center}.tag{font-size:12px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}h1{margin:6px 0 12px;font-size:clamp(48px,9vw,92px);line-height:.88;letter-spacing:-.07em}.lead{max-width:580px;margin:0 auto 22px;color:#d7dee7;line-height:1.55}.buttons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}button{border:0;border-radius:12px;padding:14px 24px;min-width:180px;background:var(--accent);color:#201906;font:inherit;font-weight:950;cursor:pointer}.alt{background:#ffffff10;color:white;border:1px solid var(--line)}.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:24px;text-align:left;font-size:13px;color:var(--muted)}.controls div{padding:10px 12px;border-radius:9px;background:#ffffff0a}.controls b{display:block;color:white;margin-bottom:3px}.hidden{display:none!important}
+#hud{position:fixed;inset:0;z-index:20;pointer-events:none}.top{position:absolute;top:18px;left:18px;width:min(360px,calc(100vw - 36px));padding:13px;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:0 12px 35px #0005}.labelrow{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:900;margin-bottom:6px}.bar{height:14px;border-radius:999px;overflow:hidden;background:#ffffff15;border:1px solid #ffffff18}.fill{height:100%;width:100%;transition:width .15s}.health{background:linear-gradient(90deg,#ff525d,#ff907d)}.meter{background:linear-gradient(90deg,#6fd7ff,#b98cff)}.meterrow{margin-top:10px}.status{position:absolute;top:20px;left:50%;transform:translateX(-50%);padding:9px 14px;border-radius:10px;background:#080b10d9;border:1px solid var(--line);font-weight:900;opacity:0;transition:.18s}.status.show{opacity:1}.cross{position:absolute;left:50%;top:50%;width:10px;height:10px;transform:translate(-50%,-50%);border:2px solid #fff;border-radius:50%;filter:drop-shadow(0 1px 2px #000)}
+.skills{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);display:flex;gap:8px}.skill{position:relative;width:92px;height:66px;padding:8px;border-radius:12px;border:1px solid var(--line);background:var(--panel);overflow:hidden}.skill .key{font-size:11px;font-weight:950;color:var(--accent)}.skill .name{margin-top:5px;font-size:12px;font-weight:850}.skill .cd{position:absolute;inset:0;display:grid;place-items:center;background:#05070bbd;font-size:20px;font-weight:950;opacity:0}.skill.cooling .cd{opacity:1}.skill.ready{box-shadow:0 0 20px #ffcf5c44}.awaken{position:absolute;right:18px;bottom:20px;width:180px;padding:12px;border-radius:13px;background:var(--panel);border:1px solid var(--line);text-align:center;font-size:12px;font-weight:900}.awaken strong{display:block;margin-top:5px;color:var(--accent);font-size:15px}.score{position:absolute;right:18px;top:18px;padding:12px 14px;border-radius:13px;background:var(--panel);border:1px solid var(--line);font-size:13px;line-height:1.55}.score b{font-size:18px}.mobile-note{display:none}
+@media(max-width:780px){.controls{grid-template-columns:1fr 1fr}.skills{width:calc(100vw - 20px);gap:5px;bottom:12px}.skill{flex:1;min-width:0;width:auto;height:60px;padding:7px}.skill .name{font-size:10px}.awaken{display:none}.score{top:auto;bottom:82px;right:10px}.top{top:10px;left:10px;width:calc(100vw - 20px)}.mobile-note{display:block;color:#ffcf5c;margin-top:12px;font-size:13px}}
+</style>
+</head>
+<body>
+<canvas id="game" aria-label="Arena Clash 3D game"></canvas><div id="fatal" style="display:none;position:fixed;inset:0;z-index:99;background:#080b12;color:white;padding:30px;font:16px system-ui"><h2>Unable to start 3D mode</h2><p id="fatalText"></p></div>
+<div id="start">
+  <div class="card">
+    <div class="tag">Original browser arena fighter</div>
+    <h1>ARENA<br>CLASH</h1>
+    <p class="lead">A true third-person 3D arena fighter. Chain a four-hit M1 combo, block, dash, launch four abilities, fight aggressive bots, and activate awakening.</p>
+    <div class="buttons"><button id="play">Enter Arena</button><button id="reset" class="alt">Reset Match</button></div>
+    <div class="controls">
+      <div><b>W A S D</b>Move</div><div><b>Mouse</b>Turn camera</div><div><b>Left click</b>M1 combo</div>
+      <div><b>Right click / F</b>Block</div><div><b>Q</b>Dash</div><div><b>1–4</b>Abilities</div>
+      <div><b>Space</b>Jump</div><div><b>R</b>Awaken at 100%</div><div><b>Esc</b>Release mouse</div>
+    </div>
+    <div class="mobile-note">Desktop keyboard and mouse recommended. The game still works if mouse lock is blocked.</div>
+  </div>
+</div>
+<div id="hud" class="hidden">
+  <div class="top">
+    <div class="labelrow"><span>HEALTH</span><span id="hpText">100 / 100</span></div><div class="bar"><div id="hp" class="fill health"></div></div>
+    <div class="labelrow meterrow"><span>POWER</span><span id="meterText">0%</span></div><div class="bar"><div id="meter" class="fill meter"></div></div>
+  </div>
+  <div id="status" class="status"></div><div class="cross"></div>
+  <div class="score">KOs <b id="kos">0</b><br>Enemies <b id="enemyCount">4</b></div>
+  <div class="skills" id="skills"></div>
+  <div class="awaken">Press R at full meter<strong id="awakeText">AWAKENING</strong></div>
+</div>
+<script>window.addEventListener("error",function(e){const f=document.getElementById("fatal"),t=document.getElementById("fatalText");if(f&&t){t.textContent=e.message||"Your browser could not start WebGL.";f.style.display="block";}});</script><script type="module" src="./arena-game.js"></script>
+</body>
+</html>
