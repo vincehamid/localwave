@@ -37,6 +37,20 @@ jobs:
             https://unpkg.com/three@0.185.0/build/three.module.js \
             --output _site/three.module.js
           sed -i 's#https://unpkg.com/three@0.185.0/build/three.module.js#./three.module.js#g' _site/arena-clash.html
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('_site/arena-clash.html')
+          s = p.read_text()
+          s = s.replace(
+              "$('#play').onclick=()=>canvas.requestPointerLock();",
+              "$('#play').onclick=()=>{start.classList.add('hidden');hud.classList.remove('hidden');locked=true;try{const p=canvas.requestPointerLock?.();if(p&&p.catch)p.catch(()=>{})}catch(e){}};"
+          )
+          s = s.replace(
+              "document.addEventListener('pointerlockchange',()=>{locked=document.pointerLockElement===canvas;if(locked){start.classList.add('hidden');hud.classList.remove('hidden')}else if(start.classList.contains('hidden'))flash('PAUSED — CLICK TO RESUME',999999)});",
+              "document.addEventListener('pointerlockchange',()=>{if(document.pointerLockElement===canvas)locked=true;});"
+          )
+          p.write_text(s)
+          PY
           touch _site/.nojekyll
 
       - name: Configure Pages
